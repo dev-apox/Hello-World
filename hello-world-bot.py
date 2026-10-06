@@ -2,7 +2,7 @@ import base64
 import time
 import requests
 
-# ================= config =================
+# ================= CONFIGURAZIONE =================
 TOKEN = "secret token"
 
 OWNER = "username"
