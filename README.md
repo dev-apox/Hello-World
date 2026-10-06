@@ -1,2 +1,3 @@
-# Hello-World
-A bot built with a single, uncompromising prupose: typing "Hello World!" exactly 1,000 times.
+# Why?
+## Because one "Hello World!" is just testing the waters. A thousand is a statement.
+
