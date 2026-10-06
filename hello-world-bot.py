@@ -2,12 +2,12 @@ import base64
 import time
 import requests
 
-# ================= INFOS =================
-TOKEN = "YOUR PERSONAL KEY"
+# ================= config =================
+TOKEN = "secret token"
 
-OWNER = "USERNAME"
-REPO = "REPO"
-MAIN_BRANCH = "BRANCH"  
+OWNER = "username"
+REPO = "your repo"
+MAIN_BRANCH = "main"  
 TOTAL_ITERATIONS = 1000
 # ===================================================
 
@@ -84,8 +84,11 @@ def delete_branch(branch_name):
 def run_bot():
     print(f"Avvio del ciclo di {TOTAL_ITERATIONS} modifiche...")
 
-    for i in range(1, TOTAL_ITERATIONS + 1):
-        branch_name = f"modifica-hello-world-{i}"
+    i = 1
+    while i <= TOTAL_ITERATIONS:
+        # Usa il timestamp per garantire che il nome del branch sia univoco
+        timestamp = int(time.time())
+        branch_name = f"modifica-{i}-{timestamp}"
         print(f"\n--- [Iterazione {i}/{TOTAL_ITERATIONS}] ---")
 
         try:
@@ -107,18 +110,22 @@ def run_bot():
             delete_branch(branch_name)
             print("5. Branch pulito.")
 
+            i += 1
+
         except requests.exceptions.HTTPError as err:
             print(f"Errore HTTP all'iterazione {i}: {err}")
-            if err.response.status_code == 403 or err.response.status_code == 429:
-                print("Raggiunto limite frequenza API di GitHub. In pausa per 30 secondi...")
-                time.sleep(30)
-            else:
-                break
+            print("Pulizia branch e attesa di 5 secondi prima di riprovare...")
+            try:
+                delete_branch(branch_name)
+            except Exception:
+                pass
+            time.sleep(5)
+
         except Exception as e:
             print(f"Errore generico all'iterazione {i}: {e}")
-            break
+            time.sleep(5)
 
-        time.sleep(1.5)
+        time.sleep(2)
 
 
 if __name__ == "__main__":
