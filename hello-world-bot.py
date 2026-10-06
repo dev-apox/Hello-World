@@ -86,7 +86,6 @@ def run_bot():
 
     i = 1
     while i <= TOTAL_ITERATIONS:
-        # Usa il timestamp per garantire che il nome del branch sia univoco
         timestamp = int(time.time())
         branch_name = f"modifica-{i}-{timestamp}"
         print(f"\n--- [Iterazione {i}/{TOTAL_ITERATIONS}] ---")
