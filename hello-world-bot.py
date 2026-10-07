@@ -2,7 +2,7 @@ import base64
 import time
 import requests
 
-# ================= CONFIGURAZIONE =================
+# ================= CONFIGURATION =================
 TOKEN = "secret token"
 
 OWNER = "username"
@@ -47,7 +47,7 @@ def update_readme_in_branch(branch_name, current_content, sha, iteration):
 
     url = f"{BASE_URL}/contents/README.md"
     payload = {
-        "message": f"docs: aggiungi Hello World! #{iteration}",
+        "message": f"docs: add Hello World! #{iteration}",
         "content": encoded_content,
         "sha": sha,
         "branch": branch_name,
@@ -59,10 +59,10 @@ def update_readme_in_branch(branch_name, current_content, sha, iteration):
 def create_pull_request(branch_name, iteration):
     url = f"{BASE_URL}/pulls"
     payload = {
-        "title": f"Aggiunta Hello World! #{iteration}",
+        "title": f"Add Hello World! #{iteration}",
         "head": branch_name,
         "base": MAIN_BRANCH,
-        "body": f"Merge automatico per l'iterazione {iteration}",
+        "body": f"Automatic merge for iteration {iteration}",
     }
     res = requests.post(url, json=payload, headers=HEADERS)
     res.raise_for_status()
@@ -82,38 +82,38 @@ def delete_branch(branch_name):
 
 
 def run_bot():
-    print(f"Avvio del ciclo di {TOTAL_ITERATIONS} modifiche...")
+    print(f"Starting cycle of {TOTAL_ITERATIONS} changes...")
 
     i = 1
     while i <= TOTAL_ITERATIONS:
         timestamp = int(time.time())
-        branch_name = f"modifica-{i}-{timestamp}"
-        print(f"\n--- [Iterazione {i}/{TOTAL_ITERATIONS}] ---")
+        branch_name = f"change-{i}-{timestamp}"
+        print(f"\n--- [Iteration {i}/{TOTAL_ITERATIONS}] ---")
 
         try:
             main_sha = get_latest_commit_sha()
             content, readme_sha = get_readme_info()
 
             create_branch(branch_name, main_sha)
-            print(f"1. Branch '{branch_name}' creato.")
+            print(f"1. Branch '{branch_name}' created.")
 
             update_readme_in_branch(branch_name, content, readme_sha, i)
-            print("2. Scritto 'Hello World!' e fatto il commit.")
+            print("2. Wrote 'Hello World!' and committed.")
 
             pr_num = create_pull_request(branch_name, i)
-            print(f"3. PR #{pr_num} creata.")
+            print(f"3. PR #{pr_num} created.")
 
             merge_pull_request(pr_num)
-            print("4. Merge completato sul main!")
+            print("4. Merge completed to main!")
 
             delete_branch(branch_name)
-            print("5. Branch pulito.")
+            print("5. Branch cleaned up.")
 
             i += 1
 
         except requests.exceptions.HTTPError as err:
-            print(f"Errore HTTP all'iterazione {i}: {err}")
-            print("Pulizia branch e attesa di 5 secondi prima di riprovare...")
+            print(f"HTTP error at iteration {i}: {err}")
+            print("Cleaning up branch and waiting 5 seconds before retrying...")
             try:
                 delete_branch(branch_name)
             except Exception:
@@ -121,7 +121,7 @@ def run_bot():
             time.sleep(5)
 
         except Exception as e:
-            print(f"Errore generico all'iterazione {i}: {e}")
+            print(f"Generic error at iteration {i}: {e}")
             time.sleep(5)
 
         time.sleep(2)
